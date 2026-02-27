@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       if (models.Services) {
         Garage.hasMany(models.Services, { foreignKey: 'garageId', as: 'services' });
       }
+      if (models.Sparepart) {
+        Garage.hasMany(models.Sparepart, { foreignKey: 'garageId', as: 'spareparts' });
+      }
     }
   }
   Garage.init({

@@ -11,12 +11,14 @@ const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
 const garageRoutes = require('./routes/garage.routes');
 const servicesRoutes = require('./routes/services.routes');
+const sparepartRoutes = require('./routes/sparepart.routes');
 
 // Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/garages', garageRoutes);
 app.use('/api/services', servicesRoutes);
+app.use('/api/spareparts', sparepartRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World! The API is running.');

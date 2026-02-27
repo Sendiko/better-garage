@@ -1,4 +1,4 @@
-const { Garage, User, Role, Services } = require('../database/models');
+const { Garage, User, Role, Services, Sparepart } = require('../database/models');
 
 const garageController = {
     // Read all garages
@@ -221,6 +221,10 @@ const garageController = {
                             where: { name: 'Technician' }
                         }],
                         attributes: { exclude: ['password'] }
+                    },
+                    {
+                        model: Sparepart,
+                        as: 'spareparts'
                     }
                 ]
             });
