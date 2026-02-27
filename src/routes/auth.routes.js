@@ -7,6 +7,6 @@ const upload = require('../middlewares/upload.middleware');
 router.post('/register', upload.single('photo'), authController.register);
 
 // User login endpoint
-router.post('/login', authController.login);
+router.post('/login', upload.none(), authController.login);
 
 module.exports = router;
