@@ -4,7 +4,8 @@ const sparepartController = {
     // Create a new sparepart
     async createSparepart(req, res) {
         try {
-            const { name, partNumber, brand, category } = req.body;
+            let { name, partNumber, brand, category, price } = req.body;
+            let photoUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
             const { garageId } = req.user;
 
             if (!garageId) {
@@ -24,6 +25,8 @@ const sparepartController = {
                 partNumber,
                 brand,
                 category,
+                price: price || 0,
+                photoUrl,
                 garageId
             });
 
@@ -107,7 +110,8 @@ const sparepartController = {
         try {
             const { id } = req.params;
             const { garageId } = req.user;
-            const { name, partNumber, brand, category } = req.body;
+            let { name, partNumber, brand, category, price } = req.body;
+            let photoUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
 
             const sparepart = await Sparepart.findByPk(id);
 
@@ -130,6 +134,8 @@ const sparepartController = {
             if (partNumber !== undefined) updateData.partNumber = partNumber;
             if (brand !== undefined) updateData.brand = brand;
             if (category !== undefined) updateData.category = category;
+            if (price !== undefined) updateData.price = price;
+            if (photoUrl !== undefined) updateData.photoUrl = photoUrl;
 
             await sparepart.update(updateData);
 

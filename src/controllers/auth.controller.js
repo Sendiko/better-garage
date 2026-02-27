@@ -8,7 +8,12 @@ const authController = {
     // Register a new user
     async register(req, res) {
         try {
-            const { fullName, email, password, photoUrl, phone } = req.body;
+            let { fullName, email, password, photoUrl, phone } = req.body;
+
+            // Handle file upload
+            if (req.file) {
+                photoUrl = `/uploads/${req.file.filename}`;
+            }
 
             // Basic validation
             if (!email || !password) {

@@ -53,7 +53,17 @@ const garageController = {
     // Create a new garage
     async createGarage(req, res) {
         try {
-            const { name, description, photoUrl, bannerPhoto } = req.body;
+            let { name, description, photoUrl, bannerPhoto } = req.body;
+
+            // Handle file uploads
+            if (req.files) {
+                if (req.files.photo && req.files.photo.length > 0) {
+                    photoUrl = `/uploads/${req.files.photo[0].filename}`;
+                }
+                if (req.files.banner && req.files.banner.length > 0) {
+                    bannerPhoto = `/uploads/${req.files.banner[0].filename}`;
+                }
+            }
 
             if (!name) {
                 return res.status(400).json({
@@ -110,7 +120,17 @@ const garageController = {
     async updateGarage(req, res) {
         try {
             const { id } = req.params;
-            const { name, description, photoUrl, bannerPhoto } = req.body;
+            let { name, description, photoUrl, bannerPhoto } = req.body;
+
+            // Handle file uploads
+            if (req.files) {
+                if (req.files.photo && req.files.photo.length > 0) {
+                    photoUrl = `/uploads/${req.files.photo[0].filename}`;
+                }
+                if (req.files.banner && req.files.banner.length > 0) {
+                    bannerPhoto = `/uploads/${req.files.banner[0].filename}`;
+                }
+            }
 
             const garage = await Garage.findByPk(id);
 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const garageController = require('../controllers/garage.controller');
 const { verifyToken, requireRole } = require('../middlewares/auth.middleware');
+const upload = require('../middlewares/upload.middleware');
 const { Role } = require('../database/models');
 
 // Fetch allowed roles dynamically from the database
@@ -22,10 +23,16 @@ router.get('/my-garage', verifyToken, requireRole(['Admin']), garageController.g
 router.get('/:id', verifyToken, requireRole(allRoles), garageController.getGarageById);
 
 // Create a new garage (Admin)
-router.post('/', verifyToken, requireRole(['Admin']), garageController.createGarage);
+router.post('/', verifyToken, requireRole(['Admin']), upload.fields([
+    { name: 'photo', maxCount: 1 },
+    { name: 'banner', maxCount: 1 }
+]), garageController.createGarage);
 
 // Update an existing garage (Admin)
-router.put('/:id', verifyToken, requireRole(['Admin']), garageController.updateGarage);
+router.put('/:id', verifyToken, requireRole(['Admin']), upload.fields([
+    { name: 'photo', maxCount: 1 },
+    { name: 'banner', maxCount: 1 }
+]), garageController.updateGarage);
 
 // Delete a garage (Admin)
 router.delete('/:id', verifyToken, requireRole(['Admin']), garageController.deleteGarage);

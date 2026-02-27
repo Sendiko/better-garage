@@ -1,10 +1,19 @@
 const express = require('express');
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware configuration
 app.use(express.json());
+
+// Serve static files from the uploads directory
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsDir));
 
 // Import routes
 const authRoutes = require('./routes/auth.routes');
