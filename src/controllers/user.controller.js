@@ -53,7 +53,7 @@ const userController = {
     // Create a new user (Note: auth.controller handles registration, this is for admin creation)
     async createUser(req, res) {
         try {
-            const { fullName, email, password, photoUrl, phone } = req.body;
+            const { fullName, email, password, photoUrl, phone, roleId } = req.body;
 
             if (!email || !password) {
                 return res.status(400).json({
@@ -76,7 +76,8 @@ const userController = {
                 email,
                 password: hashedPassword,
                 photoUrl,
-                phone
+                phone,
+                roleId
             });
 
             const userResponse = newUser.toJSON();
@@ -99,7 +100,7 @@ const userController = {
     async updateUser(req, res) {
         try {
             const { id } = req.params;
-            const { fullName, email, password, photoUrl, phone } = req.body;
+            const { fullName, email, password, photoUrl, phone, roleId } = req.body;
 
             const user = await User.findByPk(id);
 
@@ -124,6 +125,7 @@ const userController = {
             }
             if (photoUrl !== undefined) updateData.photoUrl = photoUrl;
             if (phone !== undefined) updateData.phone = phone;
+            if (roleId !== undefined) updateData.roleId = roleId;
 
             // Handle password update if provided
             if (password) {
