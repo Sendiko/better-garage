@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const garageController = require('../controllers/garage.controller');
-
 const { verifyToken, requireRole } = require('../middlewares/auth.middleware');
 const { Role } = require('../database/models');
 
