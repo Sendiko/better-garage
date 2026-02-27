@@ -1,40 +1,32 @@
 'use strict';
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Spareparts', {
+    await queryInterface.createTable('TransactionSpareparts', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING
-      },
-      partNumber: {
-        type: Sequelize.STRING
-      },
-      brand: {
-        type: Sequelize.STRING
-      },
-      category: {
-        type: Sequelize.STRING
-      },
-      photoUrl: {
-        type: Sequelize.STRING
-      },
-      garageId: {
+      transactionId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Garages', // Name of the target table
-          key: 'id',
+          model: 'Transactions', // Name of the target table
+          key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        onDelete: 'CASCADE'
       },
-      photoUrl: {
-        type: Sequelize.STRING
+      sparepartId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Spareparts', // Name of the target table
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
@@ -46,7 +38,8 @@ module.exports = {
       }
     });
   },
+
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Spareparts');
+    await queryInterface.dropTable('TransactionSpareparts');
   }
 };

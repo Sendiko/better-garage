@@ -13,6 +13,14 @@ module.exports = (sequelize, DataTypes) => {
       if (models.Garage) {
         Sparepart.belongsTo(models.Garage, { foreignKey: 'garageId', as: 'garage' });
       }
+      if (models.Transaction) {
+        Sparepart.belongsToMany(models.Transaction, {
+          through: 'TransactionSpareparts',
+          as: 'transactions',
+          foreignKey: 'sparepartId',
+          otherKey: 'transactionId'
+        });
+      }
     }
   }
   Sparepart.init({
@@ -20,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     partNumber: DataTypes.STRING,
     brand: DataTypes.STRING,
     category: DataTypes.STRING,
+    photoUrl: DataTypes.STRING,
     garageId: DataTypes.INTEGER
   }, {
     sequelize,

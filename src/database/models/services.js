@@ -13,6 +13,14 @@ module.exports = (sequelize, DataTypes) => {
       if (models.Garage) {
         Services.belongsTo(models.Garage, { foreignKey: 'garageId', as: 'garage' });
       }
+      if (models.Transaction) {
+        Services.belongsToMany(models.Transaction, {
+          through: 'TransactionServices',
+          as: 'transactions',
+          foreignKey: 'serviceId',
+          otherKey: 'transactionId'
+        });
+      }
     }
   }
   Services.init({
