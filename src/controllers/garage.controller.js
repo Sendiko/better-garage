@@ -58,10 +58,10 @@ const garageController = {
             // Handle file uploads
             if (req.files) {
                 if (req.files.photo && req.files.photo.length > 0) {
-                    photoUrl = `/uploads/${req.files.photo[0].filename}`;
+                    photoUrl = `/public/garages/${req.files.photo[0].filename}`;
                 }
                 if (req.files.banner && req.files.banner.length > 0) {
-                    bannerPhoto = `/uploads/${req.files.banner[0].filename}`;
+                    bannerPhoto = `/public/garages/${req.files.banner[0].filename}`;
                 }
             }
 
@@ -125,10 +125,10 @@ const garageController = {
             // Handle file uploads
             if (req.files) {
                 if (req.files.photo && req.files.photo.length > 0) {
-                    photoUrl = `/uploads/${req.files.photo[0].filename}`;
+                    photoUrl = `/public/garages/${req.files.photo[0].filename}`;
                 }
                 if (req.files.banner && req.files.banner.length > 0) {
-                    bannerPhoto = `/uploads/${req.files.banner[0].filename}`;
+                    bannerPhoto = `/public/garages/${req.files.banner[0].filename}`;
                 }
             }
 

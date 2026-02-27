@@ -12,7 +12,7 @@ const authController = {
 
             // Handle file upload
             if (req.file) {
-                photoUrl = `/uploads/${req.file.filename}`;
+                photoUrl = `/public/profiles/${req.file.filename}`;
             }
 
             // Basic validation

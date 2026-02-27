@@ -5,7 +5,7 @@ const sparepartController = {
     async createSparepart(req, res) {
         try {
             let { name, partNumber, brand, category, price } = req.body;
-            let photoUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+            let photoUrl = req.file ? `/public/spareparts/${req.file.filename}` : undefined;
             const { garageId } = req.user;
 
             if (!garageId) {
@@ -111,7 +111,7 @@ const sparepartController = {
             const { id } = req.params;
             const { garageId } = req.user;
             let { name, partNumber, brand, category, price } = req.body;
-            let photoUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+            let photoUrl = req.file ? `/public/spareparts/${req.file.filename}` : undefined;
 
             const sparepart = await Sparepart.findByPk(id);
 
