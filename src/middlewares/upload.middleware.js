@@ -3,15 +3,15 @@ const path = require('path');
 const fs = require('fs');
 
 // Ensure upload directory exists
-const uploadDir = path.join(__dirname, '../../uploads');
+const uploadDir = path.join(__dirname, '../../public');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Map logical models to subdirectories inside /uploads
+// Map logical models to subdirectories inside /public
 const getSubDir = (req) => {
     // We can use the baseUrl to determine the subfolder
-    if (req.baseUrl.includes('api/users') || req.baseUrl.includes('api/auth')) return 'users';
+    if (req.baseUrl.includes('api/users') || req.baseUrl.includes('api/auth')) return 'profiles';
     if (req.baseUrl.includes('api/garages')) return 'garages';
     if (req.baseUrl.includes('api/spareparts')) return 'spareparts';
     return 'misc';

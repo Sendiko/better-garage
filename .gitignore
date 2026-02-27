@@ -1,3 +1,9 @@
 node_modules/
 package-lock.json
 .env
+
+# Ignore everything in public subdirectories
+public/*/*
+
+# Un-ignore .txt files so directories can be committed
+!public/*/*.txt
