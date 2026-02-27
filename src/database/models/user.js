@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       if (models.Role) {
         User.belongsTo(models.Role, { foreignKey: 'roleId', as: 'role' });
       }
+      if (models.Garage) {
+        User.belongsTo(models.Garage, { foreignKey: 'garageId', as: 'garage' });
+      }
     }
   }
   User.init({
@@ -21,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     photoUrl: DataTypes.STRING,
     phone: DataTypes.STRING,
-    roleId: DataTypes.INTEGER
+    roleId: DataTypes.INTEGER,
+    garageId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'User',

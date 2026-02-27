@@ -3,9 +3,15 @@ const router = express.Router();
 const garageController = require('../controllers/garage.controller');
 
 const { verifyToken, requireRole } = require('../middlewares/auth.middleware');
+const { Role } = require('../database/models');
 
-// Define allowed roles
-const allRoles = ['Admin', 'Technician', 'Customer'];
+// Fetch allowed roles dynamically from the database
+const allRoles = [];
+Role.findAll()
+    .then(roles => {
+        allRoles.push(...roles.map(r => r.name));
+    })
+    .catch(err => console.error('Failed to fetch roles for garage endpoints:', err));
 
 // Read all garages (all roles)
 router.get('/', verifyToken, requireRole(allRoles), garageController.getAllGarages);
