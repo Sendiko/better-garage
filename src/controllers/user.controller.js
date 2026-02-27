@@ -53,7 +53,11 @@ const userController = {
     // Create a new user (Note: auth.controller handles registration, this is for admin creation)
     async createUser(req, res) {
         try {
-            const { fullName, email, password, photoUrl, phone, roleId } = req.body;
+            let { fullName, email, password, photoUrl, phone, roleId } = req.body;
+
+            if (req.file) {
+                photoUrl = `/uploads/${req.file.filename}`;
+            }
 
             if (!email || !password) {
                 return res.status(400).json({
@@ -100,7 +104,11 @@ const userController = {
     async updateUser(req, res) {
         try {
             const { id } = req.params;
-            const { fullName, email, password, photoUrl, phone, roleId } = req.body;
+            let { fullName, email, password, photoUrl, phone, roleId } = req.body;
+
+            if (req.file) {
+                photoUrl = `/uploads/${req.file.filename}`;
+            }
 
             const user = await User.findByPk(id);
 

@@ -1,20 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/user.controller');
+const { verifyToken } = require('../middlewares/auth.middleware');
+const upload = require('../middlewares/upload.middleware');
 
 // Read all users
-router.get('/', userController.getAllUsers);
+router.get('/', verifyToken, userController.getAllUsers);
 
 // Read a single user by ID
-router.get('/:id', userController.getUserById);
+router.get('/:id', verifyToken, userController.getUserById);
 
 // Create a new user (Admin)
-router.post('/', userController.createUser);
+router.post('/', verifyToken, upload.single('photo'), userController.createUser);
 
 // Update an existing user
-router.put('/:id', userController.updateUser);
+router.put('/:id', verifyToken, upload.single('photo'), userController.updateUser);
 
 // Delete a user
-router.delete('/:id', userController.deleteUser);
+router.delete('/:id', verifyToken, userController.deleteUser);
 
 module.exports = router;
