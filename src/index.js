@@ -9,10 +9,12 @@ app.use(express.json());
 // Import routes
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
+const garageRoutes = require('./routes/garage.routes');
 
 // Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/garages', garageRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World! The API is running.');
