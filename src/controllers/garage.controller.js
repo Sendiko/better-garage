@@ -1,4 +1,4 @@
-const { Garage } = require('../database/models');
+const { Garage, User, Role, Services } = require('../database/models');
 
 const garageController = {
     // Read all garages
@@ -24,7 +24,12 @@ const garageController = {
         try {
             const { id } = req.params;
 
-            const garage = await Garage.findByPk(id);
+            const garage = await Garage.findByPk(id, {
+                include: [{
+                    model: Services,
+                    as: 'services'
+                }]
+            });
 
             if (!garage) {
                 return res.status(404).json({
@@ -180,7 +185,71 @@ const garageController = {
                 error: process.env.NODE_ENV === 'development' ? error.message : undefined
             });
         }
+    },
+
+    // Fetch Admin's own garage with its technicians and services
+    async getGarage(req, res) {
+        try {
+            // Check if user is Admin
+            if (!req.user || !req.user.role || req.user.role.name !== 'Admin') {
+                return res.status(403).json({
+                    message: 'Access denied: Only Admins can access this.'
+                });
+            }
+
+            const { garageId } = req.user;
+
+            if (!garageId) {
+                return res.status(404).json({
+                    message: 'You are not assigned to any garage.'
+                });
+            }
+
+            const garage = await Garage.findByPk(garageId, {
+                include: [
+                    {
+                        model: Services,
+                        as: 'services'
+                    },
+                    {
+                        model: User,
+                        as: 'users',
+                        required: false, // Don't fail if there are no technicians
+                        include: [{
+                            model: Role,
+                            as: 'role',
+                            where: { name: 'Technician' }
+                        }],
+                        attributes: { exclude: ['password'] }
+                    }
+                ]
+            });
+
+            if (!garage) {
+                return res.status(404).json({
+                    message: 'Garage not found'
+                });
+            }
+
+            const garageData = garage.toJSON();
+
+            // Format to name it technicians
+            garageData.technicians = garageData.users;
+            delete garageData.users;
+
+            return res.status(200).json({
+                message: 'Admin garage retrieved successfully',
+                data: garageData
+            });
+        } catch (error) {
+            console.error('Error fetching admin garage:', error);
+            return res.status(500).json({
+                message: 'An error occurred while retrieving the garage',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
     }
 };
 
 module.exports = garageController;
+

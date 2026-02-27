@@ -15,6 +15,9 @@ Role.findAll()
 // Read all garages (all roles)
 router.get('/', verifyToken, requireRole(allRoles), garageController.getAllGarages);
 
+// Read admin's garage (Admin)
+router.get('/my-garage', verifyToken, requireRole(['Admin']), garageController.getGarage);
+
 // Read a single garage by ID (all roles)
 router.get('/:id', verifyToken, requireRole(allRoles), garageController.getGarageById);
 
