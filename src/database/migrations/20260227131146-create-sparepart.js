@@ -24,6 +24,10 @@ module.exports = {
       photoUrl: {
         type: Sequelize.STRING
       },
+      price: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
       garageId: {
         type: Sequelize.INTEGER,
         references: {

@@ -16,6 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       if (models.Garage) {
         User.belongsTo(models.Garage, { foreignKey: 'garageId', as: 'garage' });
       }
+      if (models.Transaction) {
+        User.hasOne(models.Transaction, { foreignKey: 'technicianId', as: 'transaction' });
+      }
     }
   }
   User.init({

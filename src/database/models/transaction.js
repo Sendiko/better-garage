@@ -26,6 +26,12 @@ module.exports = (sequelize, DataTypes) => {
           otherKey: 'sparepartId'
         });
       }
+      if (models.User) {
+        Transaction.belongsTo(models.User, {
+          foreignKey: 'technicianId',
+          as: 'technician'
+        });
+      }
     }
   }
   Transaction.init({
@@ -38,6 +44,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Transaction',
+    paranoid: true
   });
   return Transaction;
 };
