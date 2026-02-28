@@ -3,6 +3,7 @@ const router = express.Router();
 const servicesController = require('../controllers/services.controller');
 const { verifyToken, requireRole } = require('../middlewares/auth.middleware');
 const { Role } = require('../database/models');
+const upload = require('../middlewares/upload.middleware');
 
 // Fetch allowed roles dynamically from the database
 const allRoles = [];
@@ -19,10 +20,10 @@ router.get('/', verifyToken, requireRole(allRoles), servicesController.getAllSer
 router.get('/:id', verifyToken, requireRole(allRoles), servicesController.getServiceById);
 
 // Create a new service (Admin)
-router.post('/', verifyToken, requireRole(['Admin']), servicesController.createService);
+router.post('/', verifyToken, requireRole(['Admin']), upload.none(), servicesController.createService);
 
 // Update an existing service (Admin)
-router.put('/:id', verifyToken, requireRole(['Admin']), servicesController.updateService);
+router.put('/:id', verifyToken, requireRole(['Admin']), upload.none(), servicesController.updateService);
 
 // Delete a service (Admin)
 router.delete('/:id', verifyToken, requireRole(['Admin']), servicesController.deleteService);
