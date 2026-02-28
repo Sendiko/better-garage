@@ -56,7 +56,7 @@ const userController = {
             let { fullName, email, password, photoUrl, phone, roleId } = req.body;
 
             if (req.file) {
-                photoUrl = `/uploads/${req.file.filename}`;
+                photoUrl = `/public/profiles/${req.file.filename}`;
             }
 
             if (!email || !password) {
@@ -107,7 +107,7 @@ const userController = {
             let { fullName, email, password, photoUrl, phone, roleId } = req.body;
 
             if (req.file) {
-                photoUrl = `/uploads/${req.file.filename}`;
+                photoUrl = `/public/profiles/${req.file.filename}`;
             }
 
             const user = await User.findByPk(id);

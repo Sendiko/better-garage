@@ -1,4 +1,4 @@
-const { User } = require('../database/models');
+const { User, Role } = require('../database/models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -12,7 +12,7 @@ const authController = {
 
             // Handle file upload
             if (req.file) {
-                photoUrl = `/uploads/${req.file.filename}`;
+                photoUrl = `/public/profiles/${req.file.filename}`;
             }
 
             // Basic validation
@@ -34,13 +34,17 @@ const authController = {
             const saltRounds = 10;
             const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+            // Fetch the default role for new registrations
+            const defaultRole = await Role.findOne({ where: { name: 'Customer' } });
+
             // Create new user
             const newUser = await User.create({
                 fullName,
                 email,
                 password: hashedPassword,
                 photoUrl,
-                phone
+                phone,
+                roleId: defaultRole ? defaultRole.id : null // Assign default role
             });
 
             // Remove password before sending response
