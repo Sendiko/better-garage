@@ -1,4 +1,4 @@
-const { User } = require('../database/models');
+const { User, Role } = require('../database/models');
 const bcrypt = require('bcrypt');
 
 const userController = {
@@ -95,6 +95,74 @@ const userController = {
             console.error('Error creating user:', error);
             return res.status(500).json({
                 message: 'An error occurred while creating the user',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
+    },
+
+    // Special API for Admin to create a Technician for their garage
+    async createTechnician(req, res) {
+        try {
+            // Ensure the user is an admin and has a garage
+            const adminUser = req.user;
+            if (!adminUser.garageId) {
+                return res.status(403).json({
+                    message: 'Access denied: You must be assigned to a garage to create technicians'
+                });
+            }
+
+            let { fullName, email, password, phone } = req.body;
+            let photoUrl;
+
+            if (req.file) {
+                photoUrl = `/public/profiles/${req.file.filename}`;
+            }
+
+            if (!email || !password || !fullName) {
+                return res.status(400).json({
+                    message: 'Full name, email, and password are required'
+                });
+            }
+
+            const existingUser = await User.findOne({ where: { email } });
+            if (existingUser) {
+                return res.status(409).json({
+                    message: 'User with this email already exists'
+                });
+            }
+
+            // Fetch the Technician role
+            const techRole = await Role.findOne({ where: { name: 'Technician' } });
+            if (!techRole) {
+                return res.status(500).json({
+                    message: 'Technician role not found in the database. Please run the seeders.'
+                });
+            }
+
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+            const newTechnician = await User.create({
+                fullName,
+                email,
+                password: hashedPassword,
+                photoUrl,
+                phone,
+                roleId: techRole.id,
+                garageId: adminUser.garageId // Tie them to the admin's garage
+            });
+
+            const userResponse = newTechnician.toJSON();
+            delete userResponse.password;
+
+            return res.status(201).json({
+                message: 'Technician account created successfully',
+                data: userResponse
+            });
+        } catch (error) {
+            console.error('Error creating technician:', error);
+            return res.status(500).json({
+                message: 'An error occurred while creating the technician account',
                 error: process.env.NODE_ENV === 'development' ? error.message : undefined
             });
         }
