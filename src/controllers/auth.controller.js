@@ -126,8 +126,16 @@ const authController = {
             }
             delete userResponse.roleId;
 
+            // Generate JWT token
+            const token = jwt.sign(
+                { id: newUser.id, email: newUser.email },
+                JWT_SECRET,
+                { expiresIn: '24h' }
+            );
+
             return res.status(201).json({
                 message: 'Garage owner registered successfully',
+                token,
                 user: userResponse
             });
         } catch (error) {
