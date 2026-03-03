@@ -6,6 +6,9 @@ const upload = require('../middlewares/upload.middleware');
 // User registration endpoint
 router.post('/register', upload.single('photo'), authController.register);
 
+// Garage Owner registration endpoint
+router.post('/register-owner', upload.single('photo'), authController.registerOwner);
+
 // User login endpoint
 router.post('/login', upload.none(), authController.login);
 

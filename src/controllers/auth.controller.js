@@ -68,6 +68,69 @@ const authController = {
         }
     },
 
+    // Register a new garage owner
+    async registerOwner(req, res) {
+        try {
+            let { fullName, email, password, photoUrl, phone } = req.body;
+
+            // Handle file upload
+            if (req.file) {
+                photoUrl = `/public/profiles/${req.file.filename}`;
+            }
+
+            // Basic validation
+            if (!email || !password) {
+                return res.status(400).json({
+                    message: 'Email and password are required'
+                });
+            }
+
+            // Check if user already exists
+            const existingUser = await User.findOne({ where: { email } });
+            if (existingUser) {
+                return res.status(409).json({
+                    message: 'User with this email already exists'
+                });
+            }
+
+            // Hash password
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+            // Fetch the default role for garage owners
+            const ownerRole = await Role.findOne({ where: { name: 'Garage Owner' } });
+
+            // Create new user
+            const newUser = await User.create({
+                fullName,
+                email,
+                password: hashedPassword,
+                photoUrl,
+                phone,
+                roleId: ownerRole ? ownerRole.id : null // Assign owner role
+            });
+
+            // Remove password before sending response
+            const userResponse = newUser.toJSON();
+            delete userResponse.password;
+
+            if (ownerRole) {
+                userResponse.roleName = ownerRole.name;
+            }
+
+            return res.status(201).json({
+                message: 'Garage owner registered successfully',
+                user: userResponse
+            });
+        } catch (error) {
+            console.error('Error during garage owner registration:', error);
+            return res.status(500).json({
+                message: 'An error occurred during registration',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
+    },
+
     // Login an existing user
     async login(req, res) {
         try {
