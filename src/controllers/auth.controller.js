@@ -52,8 +52,12 @@ const authController = {
             delete userResponse.password;
 
             if (defaultRole) {
-                userResponse.roleName = defaultRole.name;
+                userResponse.role = {
+                    id: defaultRole.id,
+                    name: defaultRole.name
+                };
             }
+            delete userResponse.roleId;
 
             return res.status(201).json({
                 message: 'User registered successfully',
@@ -115,8 +119,12 @@ const authController = {
             delete userResponse.password;
 
             if (ownerRole) {
-                userResponse.roleName = ownerRole.name;
+                userResponse.role = {
+                    id: ownerRole.id,
+                    name: ownerRole.name
+                };
             }
+            delete userResponse.roleId;
 
             return res.status(201).json({
                 message: 'Garage owner registered successfully',
@@ -146,7 +154,8 @@ const authController = {
             // Find user
             const user = await User.findOne({
                 where: { email },
-                include: [{ model: Role, as: 'role' }]
+                include: [{ model: Role, as: 'role' }],
+                attributes: { exclude: ['password'] }
             });
             if (!user) {
                 return res.status(401).json({
@@ -169,14 +178,15 @@ const authController = {
                 { expiresIn: '24h' }
             );
 
-            // Remove password before sending user data
+            // Remove the roleId from the final response object to keep logic consistent
             const userResponse = user.toJSON();
-            delete userResponse.password;
+            delete userResponse.roleId;
 
-            // Flatten the role structure to add roleName
             if (userResponse.role) {
-                userResponse.roleName = userResponse.role.name;
-                delete userResponse.role;
+                userResponse.role = {
+                    id: userResponse.role.id,
+                    name: userResponse.role.name
+                };
             }
 
             return res.status(200).json({
