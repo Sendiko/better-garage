@@ -154,8 +154,7 @@ const authController = {
             // Find user
             const user = await User.findOne({
                 where: { email },
-                include: [{ model: Role, as: 'role' }],
-                attributes: { exclude: ['password'] }
+                include: [{ model: Role, as: 'role' }]
             });
             if (!user) {
                 return res.status(401).json({
@@ -178,8 +177,9 @@ const authController = {
                 { expiresIn: '24h' }
             );
 
-            // Remove the roleId from the final response object to keep logic consistent
+            // Remove the roleId and password from the final response object to keep logic consistent
             const userResponse = user.toJSON();
+            delete userResponse.password;
             delete userResponse.roleId;
 
             if (userResponse.role) {
