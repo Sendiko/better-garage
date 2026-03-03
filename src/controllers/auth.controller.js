@@ -98,7 +98,7 @@ const authController = {
             const hashedPassword = await bcrypt.hash(password, saltRounds);
 
             // Fetch the default role for garage owners
-            const ownerRole = await Role.findOne({ where: { name: 'Garage Owner' } });
+            const ownerRole = await Role.findOne({ where: { name: 'Admin' } });
 
             // Create new user
             const newUser = await User.create({
