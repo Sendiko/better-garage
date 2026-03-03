@@ -51,6 +51,10 @@ const authController = {
             const userResponse = newUser.toJSON();
             delete userResponse.password;
 
+            if (defaultRole) {
+                userResponse.roleName = defaultRole.name;
+            }
+
             return res.status(201).json({
                 message: 'User registered successfully',
                 user: userResponse
@@ -77,7 +81,10 @@ const authController = {
             }
 
             // Find user
-            const user = await User.findOne({ where: { email } });
+            const user = await User.findOne({
+                where: { email },
+                include: [{ model: Role, as: 'role' }]
+            });
             if (!user) {
                 return res.status(401).json({
                     message: 'Invalid email or password'
@@ -102,6 +109,12 @@ const authController = {
             // Remove password before sending user data
             const userResponse = user.toJSON();
             delete userResponse.password;
+
+            // Flatten the role structure to add roleName
+            if (userResponse.role) {
+                userResponse.roleName = userResponse.role.name;
+                delete userResponse.role;
+            }
 
             return res.status(200).json({
                 message: 'Login successful',
