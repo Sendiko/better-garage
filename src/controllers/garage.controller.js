@@ -65,6 +65,9 @@ const garageController = {
                 }
             }
 
+            photoUrl = photoUrl || null;
+            bannerPhoto = bannerPhoto || null;
+
             if (!name) {
                 return res.status(400).json({
                     message: 'Garage name is required'
