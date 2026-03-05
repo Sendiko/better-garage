@@ -37,7 +37,11 @@ module.exports = (sequelize, DataTypes) => {
   Transaction.init({
     bookingId: DataTypes.UUID,
     customerId: DataTypes.INTEGER,
-    status: DataTypes.STRING,
+    status: {
+      type: DataTypes.ENUM('booked', 'received', 'ongoing', 'finished', 'payed'),
+      defaultValue: 'booked'
+    },
+    bookingTime: DataTypes.DATE,
     serviceTotal: DataTypes.INTEGER,
     sparepartsTotal: DataTypes.INTEGER,
     grandTotal: DataTypes.INTEGER
