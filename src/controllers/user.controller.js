@@ -28,7 +28,7 @@ const userController = {
             const { id } = req.params;
 
             const user = await User.findByPk(id, {
-                attributes: { exclude: ['password'] },
+                attributes: { exclude: ['password', 'roleId'] },
                 include: [
                     {
                         model: Role,
