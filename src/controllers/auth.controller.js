@@ -3,6 +3,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_super_secret_key'; // fallback for development
+const TOKEN_EXPIRATION = process.env.JWT_EXPIRES_IN || '24h';
+
+const createToken = (payload) => jwt.sign(payload, JWT_SECRET, { expiresIn: TOKEN_EXPIRATION });
 
 const authController = {
     // Register a new user
@@ -127,11 +130,7 @@ const authController = {
             delete userResponse.roleId;
 
             // Generate JWT token
-            const token = jwt.sign(
-                { id: newUser.id, email: newUser.email },
-                JWT_SECRET,
-                { expiresIn: '24h' }
-            );
+            const token = createToken({ id: newUser.id, email: newUser.email });
 
             return res.status(201).json({
                 message: 'Garage owner registered successfully',
@@ -179,11 +178,7 @@ const authController = {
             }
 
             // Generate JWT token
-            const token = jwt.sign(
-                { id: user.id, email: user.email },
-                JWT_SECRET,
-                { expiresIn: '24h' }
-            );
+            const token = createToken({ id: user.id, email: user.email });
 
             // Remove the roleId and password from the final response object to keep logic consistent
             const userResponse = user.toJSON();
@@ -206,6 +201,61 @@ const authController = {
             console.error('Error during user login:', error);
             return res.status(500).json({
                 message: 'An error occurred during login',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
+    },
+
+    // Refresh access token using an expired or valid token
+    async refreshToken(req, res) {
+        try {
+            const authHeader = req.headers.authorization;
+            const token = authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : req.body.token;
+
+            if (!token) {
+                return res.status(400).json({ message: 'Token is required to refresh' });
+            }
+
+            let decoded;
+            try {
+                decoded = jwt.verify(token, JWT_SECRET);
+            } catch (error) {
+                if (error.name === 'TokenExpiredError') {
+                    decoded = jwt.verify(token, JWT_SECRET, { ignoreExpiration: true });
+                } else {
+                    return res.status(401).json({ message: 'Invalid token' });
+                }
+            }
+
+            const user = await User.findByPk(decoded.id, {
+                include: [{ model: Role, as: 'role' }]
+            });
+
+            if (!user) {
+                return res.status(401).json({ message: 'User not found or token invalid' });
+            }
+
+            const newToken = createToken({ id: user.id, email: user.email });
+            const userResponse = user.toJSON();
+            delete userResponse.password;
+            delete userResponse.roleId;
+
+            if (userResponse.role) {
+                userResponse.role = {
+                    id: userResponse.role.id,
+                    name: userResponse.role.name
+                };
+            }
+
+            return res.status(200).json({
+                message: 'Token refreshed successfully',
+                token: newToken,
+                user: userResponse
+            });
+        } catch (error) {
+            console.error('Error refreshing token:', error);
+            return res.status(500).json({
+                message: 'An error occurred while refreshing token',
                 error: process.env.NODE_ENV === 'development' ? error.message : undefined
             });
         }

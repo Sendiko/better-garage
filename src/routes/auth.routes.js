@@ -12,4 +12,7 @@ router.post('/register-owner', upload.single('photo'), authController.registerOw
 // User login endpoint
 router.post('/login', upload.none(), authController.login);
 
+// Refresh token endpoint
+router.post('/refresh', upload.none(), authController.refreshToken);
+
 module.exports = router;
