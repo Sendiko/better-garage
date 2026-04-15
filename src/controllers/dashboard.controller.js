@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Transaction, Services, Sparepart, User } = require('../database/models');
+const { Transaction, Services, Sparepart, User, Role } = require('../database/models');
 
 const statusGroups = {
     booked: ['booked'],
@@ -48,6 +48,31 @@ const buildTransactionQueryOptions = (req) => {
     };
 };
 
+const buildAggregateWhere = async (req) => {
+    const where = {};
+
+    if (req.user.role && req.user.role.name === 'Technician') {
+        where.technicianId = req.user.id;
+    }
+
+    if (req.user.role && req.user.role.name === 'Admin' && req.user.garageId) {
+        const technicians = await User.findAll({
+            where: { garageId: req.user.garageId },
+            include: [{ model: Role, as: 'role', where: { name: 'Technician' } }],
+            attributes: ['id']
+        });
+        const technicianIds = technicians.map((technician) => technician.id);
+        if (technicianIds.length > 0) {
+            where.technicianId = technicianIds;
+        } else {
+            // No technicians found in this garage, ensure aggregate queries return zero.
+            where.technicianId = -1;
+        }
+    }
+
+    return where;
+};
+
 const mapTransactionStage = (status) => {
     if (statusGroups.booked.includes(status)) return 'intake';
     if (statusGroups.active.includes(status)) return 'testing';
@@ -62,23 +87,22 @@ const getDashboardSummary = async (req, res) => {
         const options = buildTransactionQueryOptions(req);
         const baseWhere = { ...options.where };
         const include = options.include;
+        const aggregateWhere = await buildAggregateWhere(req);
 
         const revenueToday = await Transaction.sum('grandTotal', {
             where: {
-                ...baseWhere,
+                ...aggregateWhere,
                 status: statusGroups.completed,
                 ...getBookingTimeClause(today.start, today.end)
-            },
-            include
+            }
         }) || 0;
 
         const revenueYesterday = await Transaction.sum('grandTotal', {
             where: {
-                ...baseWhere,
+                ...aggregateWhere,
                 status: statusGroups.completed,
                 ...getBookingTimeClause(yesterday.start, yesterday.end)
-            },
-            include
+            }
         }) || 0;
 
         const revenueChangePercent = revenueYesterday === 0
@@ -87,18 +111,16 @@ const getDashboardSummary = async (req, res) => {
 
         const pendingAppointments = await Transaction.count({
             where: {
-                ...baseWhere,
+                ...aggregateWhere,
                 status: 'booked'
-            },
-            include
+            }
         });
 
         const jobsInProgress = await Transaction.count({
             where: {
-                ...baseWhere,
+                ...aggregateWhere,
                 status: statusGroups.active
-            },
-            include
+            }
         });
 
         const activeJobs = await Transaction.findAll({
