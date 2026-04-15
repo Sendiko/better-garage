@@ -14,6 +14,7 @@ const transactionController = {
             let sparepartsTotal = 0;
             let fetchedServices = [];
             let fetchedSpareparts = [];
+            const bookingTime = req.body.bookingTime ? new Date(req.body.bookingTime) : new Date();
 
             // Fetch and calculate Services
             if (serviceIds && serviceIds.length > 0) {
@@ -24,7 +25,8 @@ const transactionController = {
             const newTransaction = await Transaction.create({
                 bookingId,
                 customerId,
-                status: status || 'Pending',
+                status: status || 'booked',
+                bookingTime,
                 serviceTotal,
                 sparepartsTotal: 0, // Set initial total
                 grandTotal: serviceTotal,
