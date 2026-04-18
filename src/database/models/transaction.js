@@ -41,6 +41,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('booked', 'received', 'ongoing', 'finished', 'payed'),
       defaultValue: 'booked'
     },
+    vehicleName: DataTypes.STRING,
+    vehiclePlate: DataTypes.STRING,
     bookingTime: DataTypes.DATE,
     serviceTotal: DataTypes.INTEGER,
     sparepartsTotal: DataTypes.INTEGER,
