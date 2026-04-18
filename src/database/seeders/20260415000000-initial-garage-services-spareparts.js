@@ -12,6 +12,8 @@ module.exports = {
         description: 'Full-service garage specializing in repairs and maintenance.',
         photoUrl: 'https://example.com/garages/premium-auto-care.jpg',
         bannerPhoto: 'https://example.com/garages/premium-auto-care-banner.jpg',
+        address: '123 Premium Auto Way, Auto City',
+        phone_number: '555-0100',
         createdAt: now,
         updatedAt: now
       },
@@ -20,6 +22,8 @@ module.exports = {
         description: 'Reliable city auto repair shop with experienced technicians.',
         photoUrl: 'https://example.com/garages/city-garage.jpg',
         bannerPhoto: 'https://example.com/garages/city-garage-banner.jpg',
+        address: '456 City Garage Blvd, Auto City',
+        phone_number: '555-0200',
         createdAt: now,
         updatedAt: now
       }
