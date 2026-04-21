@@ -75,7 +75,7 @@ const transactionController = {
     // Read all transactions (Admin and Technician only)
     async getAllTransactions(req, res) {
         try {
-            const roleName = req.user.role ? req.user.role.name : '';
+            const roleName = req.user.role ? req.user.role.name.toLowerCase() : '';
 
             if (roleName !== 'admin' && roleName !== 'technician') {
                 return res.status(403).json({
