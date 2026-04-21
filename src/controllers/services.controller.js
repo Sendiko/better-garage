@@ -1,10 +1,19 @@
-const { Services, Garage } = require('../database/models');
+const { Services } = require('../database/models');
 
 const servicesController = {
     // Read all services
     async getAllServices(req, res) {
         try {
-            const services = await Services.findAll();
+            const { garageId } = req.user;
+
+            if (!garageId) {
+                return res.status(403).json({
+                    message: 'Access denied: You must be assigned to a garage to view services.'
+                });
+            }
+            const services = await Services.findAll({
+                where: { garageId: req.user.garageId }
+            });
 
             return res.status(200).json({
                 message: 'Services retrieved successfully',
