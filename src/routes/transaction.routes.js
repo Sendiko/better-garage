@@ -14,7 +14,7 @@ Role.findAll()
 
 
 // Read all transactions (All User roles)
-router.get('/', verifyToken, requireRole(allRoles), transactionController.getAllTransactions);
+router.get('/', verifyToken, requireRole(['Admin', 'Technician']), transactionController.getAllTransactions);
 
 // Read a single transaction by ID (All User roles)
 router.get('/:id', verifyToken, requireRole(allRoles), transactionController.getTransactionById);

@@ -72,17 +72,25 @@ const transactionController = {
         }
     },
 
-    // Read all transactions (All roles)
+    // Read all transactions (Admin and Technician only)
     async getAllTransactions(req, res) {
         try {
             const roleName = req.user.role ? req.user.role.name : '';
 
+            if (roleName !== 'admin' && roleName !== 'technician') {
+                return res.status(403).json({
+                    message: 'Access denied: You do not have permission to view transactions.'
+                });
+            }
+
             let whereClause = {};
-            // If the user is a technician, maybe they should only see their own transactions?
-            // The prompt said "Read -> All User", so I will return all transactions (or based on garage).
-            // Let's assume for now, it returns all or limits to garage if needed. I'll return all without filters for simplicity as requested.
+
+            if (roleName === 'technician') {
+                whereClause.technicianId = req.user.id;
+            }
 
             const transactions = await Transaction.findAll({
+                where: whereClause,
                 include: [
                     { model: Services, as: 'services' },
                     { model: Sparepart, as: 'spareparts' },
@@ -103,12 +111,27 @@ const transactionController = {
         }
     },
 
-    // Read one transaction by ID (All roles)
+    // Read one transaction by ID (Admin and Technician only)
     async getTransactionById(req, res) {
         try {
+            const roleName = req.user.role ? req.user.role.name : '';
+
+            if (roleName !== 'admin' && roleName !== 'technician') {
+                return res.status(403).json({
+                    message: 'Access denied: You do not have permission to view this transaction.'
+                });
+            }
+
             const { id } = req.params;
 
-            const transaction = await Transaction.findByPk(id, {
+            let whereClause = { id };
+
+            if (roleName === 'technician') {
+                whereClause.technicianId = req.user.id;
+            }
+
+            const transaction = await Transaction.findOne({
+                where: whereClause,
                 include: [
                     { model: Services, as: 'services' },
                     { model: Sparepart, as: 'spareparts' },
@@ -118,7 +141,7 @@ const transactionController = {
 
             if (!transaction) {
                 return res.status(404).json({
-                    message: 'Transaction not found'
+                    message: 'Transaction not found or you do not have permission to view it.'
                 });
             }
 
