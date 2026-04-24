@@ -25,7 +25,7 @@ const userController = {
     // Read a single user by ID
     async getUserById(req, res) {
         try {
-            const { id } = req.params;
+            const { id } = req.user;
 
             const user = await User.findByPk(id, {
                 attributes: { exclude: ['password', 'roleId'] },
@@ -49,7 +49,7 @@ const userController = {
                 data: user
             });
         } catch (error) {
-            console.error(`Error fetching user with ID ${req.params.id}:`, error);
+            console.error(`Error fetching user with ID ${req.user.id}:`, error);
             return res.status(500).json({
                 message: 'An error occurred while retrieving the user',
                 error: process.env.NODE_ENV === 'development' ? error.message : undefined
