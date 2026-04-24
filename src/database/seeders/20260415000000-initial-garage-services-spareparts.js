@@ -45,6 +45,8 @@ module.exports = {
         description: 'Complete oil change with premium motor oil.',
         price: 25000,
         garageId: garageMap['Premium Auto Care'],
+        category: 'Oil',
+        estimatedDuration: 30,
         createdAt: now,
         updatedAt: now
       },
@@ -53,6 +55,8 @@ module.exports = {
         description: 'Brake system inspection and safety check.',
         price: 18000,
         garageId: garageMap['Premium Auto Care'],
+        category: 'Repair',
+        estimatedDuration: 45,
         createdAt: now,
         updatedAt: now
       },
@@ -61,6 +65,8 @@ module.exports = {
         description: 'Engine diagnostics and performance tune-up.',
         price: 45000,
         garageId: garageMap['City Garage'],
+        category: 'Engine',
+        estimatedDuration: 120,
         createdAt: now,
         updatedAt: now
       },
@@ -69,6 +75,8 @@ module.exports = {
         description: 'Battery test and replacement with warranty.',
         price: 32000,
         garageId: garageMap['City Garage'],
+        category: 'Repair',
+        estimatedDuration: 20,
         createdAt: now,
         updatedAt: now
       }

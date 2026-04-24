@@ -27,7 +27,15 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     description: DataTypes.STRING,
     price: DataTypes.INTEGER,
-    garageId: DataTypes.INTEGER
+    garageId: DataTypes.INTEGER,
+    category: {
+      type: DataTypes.ENUM('Oil', 'Tire', 'Repair', 'Engine', 'Interior Cleaning'),
+      allowNull: true
+    },
+    estimatedDuration: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    }
   }, {
     sequelize,
     modelName: 'Services',
