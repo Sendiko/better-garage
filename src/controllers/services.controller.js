@@ -1,4 +1,5 @@
 const { Services } = require('../database/models');
+const { Op } = require('sequelize');
 
 const servicesController = {
     // Read all services
@@ -23,6 +24,47 @@ const servicesController = {
             console.error('Error fetching all services:', error);
             return res.status(500).json({
                 message: 'An error occurred while retrieving services',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
+    },
+
+    // Search services by name or description
+    async searchServices(req, res) {
+        try {
+            const { garageId } = req.user;
+            const { q } = req.query;
+
+            if (!garageId) {
+                return res.status(403).json({
+                    message: 'Access denied: You must be assigned to a garage to view services.'
+                });
+            }
+
+            if (!q) {
+                return res.status(400).json({
+                    message: 'Search query parameter "q" is required'
+                });
+            }
+
+            const services = await Services.findAll({
+                where: {
+                    garageId: req.user.garageId,
+                    [Op.or]: [
+                        { name: { [Op.like]: `%${q}%` } },
+                        { description: { [Op.like]: `%${q}%` } }
+                    ]
+                }
+            });
+
+            return res.status(200).json({
+                message: 'Services retrieved successfully',
+                data: services
+            });
+        } catch (error) {
+            console.error('Error searching services:', error);
+            return res.status(500).json({
+                message: 'An error occurred while searching services',
                 error: process.env.NODE_ENV === 'development' ? error.message : undefined
             });
         }

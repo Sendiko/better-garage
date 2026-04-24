@@ -16,6 +16,9 @@ Role.findAll()
 // Read all services (all roles)
 router.get('/', verifyToken, requireRole(allRoles), servicesController.getAllServices);
 
+// Search services (all roles)
+router.get('/search', verifyToken, requireRole(allRoles), servicesController.searchServices);
+
 // Read a single service by ID (all roles)
 router.get('/:id', verifyToken, requireRole(allRoles), servicesController.getServiceById);
 
