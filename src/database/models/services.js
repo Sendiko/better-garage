@@ -29,7 +29,11 @@ module.exports = (sequelize, DataTypes) => {
     price: DataTypes.INTEGER,
     garageId: DataTypes.INTEGER,
     category: {
-      type: DataTypes.ENUM('Oil', 'Tire', 'Repair', 'Engine', 'Interior Cleaning'),
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    icon: {
+      type: DataTypes.ENUM('oil', 'tire', 'hammer', 'engine', 'sweep'),
       allowNull: true
     },
     estimatedDuration: {

@@ -45,7 +45,8 @@ module.exports = {
         description: 'Complete oil change with premium motor oil.',
         price: 25000,
         garageId: garageMap['Premium Auto Care'],
-        category: 'Oil',
+        category: 'Maintenance',
+        icon: 'oil',
         estimatedDuration: 30,
         createdAt: now,
         updatedAt: now
@@ -56,6 +57,7 @@ module.exports = {
         price: 18000,
         garageId: garageMap['Premium Auto Care'],
         category: 'Repair',
+        icon: 'hammer',
         estimatedDuration: 45,
         createdAt: now,
         updatedAt: now
@@ -65,7 +67,8 @@ module.exports = {
         description: 'Engine diagnostics and performance tune-up.',
         price: 45000,
         garageId: garageMap['City Garage'],
-        category: 'Engine',
+        category: 'Maintenance',
+        icon: 'engine',
         estimatedDuration: 120,
         createdAt: now,
         updatedAt: now
@@ -76,6 +79,7 @@ module.exports = {
         price: 32000,
         garageId: garageMap['City Garage'],
         category: 'Repair',
+        icon: 'hammer',
         estimatedDuration: 20,
         createdAt: now,
         updatedAt: now
@@ -129,9 +133,24 @@ module.exports = {
         updatedAt: now
       }
     ], {});
+
+    // 4. Update Users with Garage IDs
+    await queryInterface.bulkUpdate('Users', 
+      { garageId: garageMap['Premium Auto Care'] }, 
+      { email: 'admin@garage.com' }
+    );
+    await queryInterface.bulkUpdate('Users', 
+      { garageId: garageMap['Premium Auto Care'] }, 
+      { email: 'bob@garage.com' }
+    );
   },
 
   async down(queryInterface, Sequelize) {
+    await queryInterface.bulkUpdate('Users', 
+      { garageId: null }, 
+      { email: ['admin@garage.com', 'bob@garage.com'] }
+    );
+
     await queryInterface.bulkDelete('Spareparts', {
       name: [
         'Brake Pad Set',
