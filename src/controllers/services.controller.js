@@ -100,7 +100,7 @@ const servicesController = {
     async createService(req, res) {
         try {
             // An admin must be logged in and assigned to a garage to create a service for it
-            const { name, description, price, category, estimatedDuration } = req.body;
+            const { name, description, price, category, estimatedDuration, icon } = req.body;
             const garageId = req.user.garageId;
 
             if (!name || price === undefined) {
@@ -121,7 +121,8 @@ const servicesController = {
                 price,
                 garageId,
                 category,
-                estimatedDuration
+                estimatedDuration,
+                icon
             });
 
             return res.status(201).json({
@@ -141,7 +142,7 @@ const servicesController = {
     async updateService(req, res) {
         try {
             const { id } = req.params;
-            const { name, description, price, category, estimatedDuration } = req.body;
+            const { name, description, price, category, estimatedDuration, icon } = req.body;
 
             const service = await Services.findByPk(id);
 
@@ -167,6 +168,7 @@ const servicesController = {
             if (price !== undefined) updateData.price = price;
             if (category !== undefined) updateData.category = category;
             if (estimatedDuration !== undefined) updateData.estimatedDuration = estimatedDuration;
+            if (icon !== undefined) updateData.icon = icon;
 
             await service.update(updateData);
 

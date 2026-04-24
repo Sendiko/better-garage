@@ -135,19 +135,19 @@ module.exports = {
     ], {});
 
     // 4. Update Users with Garage IDs
-    await queryInterface.bulkUpdate('Users', 
-      { garageId: garageMap['Premium Auto Care'] }, 
+    await queryInterface.bulkUpdate('Users',
+      { garageId: garageMap['Premium Auto Care'] },
       { email: 'admin@garage.com' }
     );
-    await queryInterface.bulkUpdate('Users', 
-      { garageId: garageMap['Premium Auto Care'] }, 
+    await queryInterface.bulkUpdate('Users',
+      { garageId: garageMap['Premium Auto Care'] },
       { email: 'bob@garage.com' }
     );
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkUpdate('Users', 
-      { garageId: null }, 
+    await queryInterface.bulkUpdate('Users',
+      { garageId: null },
       { email: ['admin@garage.com', 'bob@garage.com'] }
     );
 
