@@ -10,6 +10,9 @@ router.post('/', verifyToken, requireRole(['Admin', 'Technician']), upload.singl
 // Read all spareparts (Admin or Technician)
 router.get('/', verifyToken, requireRole(['Admin', 'Technician']), sparepartController.getSpareparts);
 
+// Search spareparts (Admin or Technician)
+router.get('/search', verifyToken, requireRole(['Admin', 'Technician']), sparepartController.searchSpareparts);
+
 // Read a single sparepart by ID (Admin or Technician)
 router.get('/:id', verifyToken, requireRole(['Admin', 'Technician']), sparepartController.getSparepartById);
 

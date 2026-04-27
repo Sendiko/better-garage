@@ -1,4 +1,5 @@
 const { Sparepart } = require('../database/models');
+const { Op } = require('sequelize');
 
 const sparepartController = {
     // Create a new sparepart
@@ -66,6 +67,49 @@ const sparepartController = {
             console.error('Error fetching spareparts:', error);
             return res.status(500).json({
                 message: 'An error occurred while retrieving spareparts',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
+        }
+    },
+
+    // Search spareparts
+    async searchSpareparts(req, res) {
+        try {
+            const { garageId } = req.user;
+            const { q } = req.query;
+
+            if (!garageId) {
+                return res.status(403).json({
+                    message: 'Access denied: You must be assigned to a garage to search spareparts.'
+                });
+            }
+
+            if (!q) {
+                return res.status(400).json({
+                    message: 'Search query "q" is required'
+                });
+            }
+
+            const spareparts = await Sparepart.findAll({
+                where: {
+                    garageId,
+                    [Op.or]: [
+                        { name: { [Op.like]: `%${q}%` } },
+                        { partNumber: { [Op.like]: `%${q}%` } },
+                        { brand: { [Op.like]: `%${q}%` } },
+                        { category: { [Op.like]: `%${q}%` } }
+                    ]
+                }
+            });
+
+            return res.status(200).json({
+                message: 'Spareparts retrieved successfully',
+                data: spareparts
+            });
+        } catch (error) {
+            console.error('Error searching spareparts:', error);
+            return res.status(500).json({
+                message: 'An error occurred while searching spareparts',
                 error: process.env.NODE_ENV === 'development' ? error.message : undefined
             });
         }
